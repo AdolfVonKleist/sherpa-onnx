@@ -11,6 +11,7 @@
 #include "sherpa-onnx/csrc/macros.h"
 #include "sherpa-onnx/csrc/onnx-utils.h"
 
+#include <iostream>
 namespace sherpa_onnx {
 
 static void UseCachedDecoderOut(
@@ -109,15 +110,24 @@ void OnlineTransducerGreedySearchDecoder::Decode(
       if (y != 0) {
         emitted = true;
         (*result)[i].tokens.push_back(y);
+	(*result)[i].timestamps.push_back((*result)[i].num_processed_frames);
+	if ((*result)[i].num_trailing_blanks < 12) {
+	  (*result)[i].num_blank_frames -= (*result)[i].num_trailing_blanks;
+	}
         (*result)[i].num_trailing_blanks = 0;
       } else {
         ++(*result)[i].num_trailing_blanks;
+	++(*result)[i].num_blank_frames;
       }
+      
+      ++(*result)[i].num_processed_frames;
     }
+    
     if (emitted) {
       Ort::Value decoder_input = model_->BuildDecoderInput(*result);
       decoder_out = model_->RunDecoder(std::move(decoder_input));
     }
+
   }
 
   UpdateCachedDecoderOut(model_->Allocator(), &decoder_out, result);

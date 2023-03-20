@@ -25,8 +25,13 @@ OnlineTransducerDecoderResult &OnlineTransducerDecoderResult::operator=(
   }
 
   tokens = other.tokens;
-  num_trailing_blanks = other.num_trailing_blanks;
+  timestamps = other.timestamps;
 
+  num_processed_frames = other.num_processed_frames;
+  num_blank_frames = other.num_blank_frames;
+  
+  num_trailing_blanks = other.num_trailing_blanks;
+  
   Ort::AllocatorWithDefaultOptions allocator;
   if (other.decoder_out) {
     decoder_out = Clone(allocator, &other.decoder_out);
@@ -50,7 +55,12 @@ OnlineTransducerDecoderResult &OnlineTransducerDecoderResult::operator=(
   }
 
   tokens = std::move(other.tokens);
+  timestamps = std::move(other.timestamps);
+
+  num_processed_frames = other.num_processed_frames;
+  num_blank_frames = other.num_blank_frames;
   num_trailing_blanks = other.num_trailing_blanks;
+  
   decoder_out = std::move(other.decoder_out);
   hyps = std::move(other.hyps);
 

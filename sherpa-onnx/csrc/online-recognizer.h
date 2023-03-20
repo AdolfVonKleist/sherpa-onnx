@@ -23,10 +23,15 @@ namespace sherpa_onnx {
 
 struct OnlineRecognizerResult {
   std::string text;
-
+  std::vector<std::string> tokens;
+  std::vector<int32_t> timestamps;
+  int32_t num_processed_frames;
+  int32_t num_blank_frames;
+  
   // TODO(fangjun): Add a method to return a json string
   std::string ToString() const { return text; }
 };
+
 
 struct OnlineRecognizerConfig {
   FeatureExtractorConfig feat_config;

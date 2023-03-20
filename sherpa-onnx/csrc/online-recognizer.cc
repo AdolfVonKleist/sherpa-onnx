@@ -20,17 +20,27 @@
 #include "sherpa-onnx/csrc/online-transducer-modified-beam-search-decoder.h"
 #include "sherpa-onnx/csrc/symbol-table.h"
 
+#include <iostream>
+
 namespace sherpa_onnx {
 
 static OnlineRecognizerResult Convert(const OnlineTransducerDecoderResult &src,
                                       const SymbolTable &sym_table) {
   std::string text;
+  std::vector<std::string> tokens;
+  std::vector<std::int32_t> timestamps;
   for (auto t : src.tokens) {
     text += sym_table[t];
+    tokens.push_back(sym_table[t]);
   }
 
   OnlineRecognizerResult ans;
   ans.text = std::move(text);
+  ans.tokens = std::move(tokens);
+  ans.timestamps = std::move(src.timestamps);
+  ans.num_processed_frames = std::move(src.num_processed_frames);
+  ans.num_blank_frames = std::move(src.num_blank_frames);
+  
   return ans;
 }
 
@@ -133,7 +143,6 @@ class OnlineRecognizer::Impl {
           ss[i]->GetFrames(ss[i]->GetNumProcessedFrames(), chunk_size);
 
       ss[i]->GetNumProcessedFrames() += chunk_shift;
-
       std::copy(features.begin(), features.end(),
                 features_vec.data() + i * chunk_size * feature_dim);
 
@@ -153,7 +162,6 @@ class OnlineRecognizer::Impl {
     auto states = model_->StackStates(states_vec);
 
     auto pair = model_->RunEncoder(std::move(x), std::move(states));
-
     decoder_->Decode(std::move(pair.first), &results);
 
     std::vector<std::vector<Ort::Value>> next_states =

@@ -139,6 +139,9 @@ class OnlineRecognizer(object):
     def get_result(self, s: OnlineStream) -> str:
         return self.recognizer.get_result(s).text.strip()
 
+    def get_result_obj(self, s: OnlineStream):
+        return self.recognizer.get_result(s)
+    
     def is_endpoint(self, s: OnlineStream) -> bool:
         return self.recognizer.is_endpoint(s)
 

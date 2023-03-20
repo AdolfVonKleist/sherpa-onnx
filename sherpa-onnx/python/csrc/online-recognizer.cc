@@ -14,7 +14,11 @@ namespace sherpa_onnx {
 static void PybindOnlineRecognizerResult(py::module *m) {
   using PyClass = OnlineRecognizerResult;
   py::class_<PyClass>(*m, "OnlineRecognizerResult")
-      .def_property_readonly("text", [](PyClass &self) { return self.text; });
+      .def_property_readonly("text", [](PyClass &self) { return self.text; })
+      .def_property_readonly("timestamps", [](PyClass &self) { return self.timestamps; })
+      .def_property_readonly("tokens", [](PyClass &self) { return self.tokens; })
+      .def_property_readonly("num_processed_frames", [](PyClass &self) { return self.num_processed_frames; })
+      .def_property_readonly("num_blank_frames", [](PyClass &self) { return self.num_blank_frames; });
 }
 
 static void PybindOnlineRecognizerConfig(py::module *m) {

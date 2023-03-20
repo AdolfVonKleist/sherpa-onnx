@@ -15,10 +15,13 @@ namespace sherpa_onnx {
 struct OnlineTransducerDecoderResult {
   /// The decoded token IDs so far
   std::vector<int64_t> tokens;
-
+  std::vector<int32_t> timestamps;
+  int32_t num_processed_frames = 0;
+  int32_t num_blank_frames = 0;
+  
   /// number of trailing blank frames decoded so far
   int32_t num_trailing_blanks = 0;
-
+  
   // Cache decoder_out for endpointing
   Ort::Value decoder_out;
 
@@ -26,7 +29,9 @@ struct OnlineTransducerDecoderResult {
   Hypotheses hyps;
 
   OnlineTransducerDecoderResult()
-      : tokens{}, num_trailing_blanks(0), decoder_out{nullptr}, hyps{} {}
+    : tokens{}, timestamps{}, num_trailing_blanks(0),
+      num_processed_frames(0), num_blank_frames(0),
+      decoder_out{nullptr}, hyps{} {}
 
   OnlineTransducerDecoderResult(const OnlineTransducerDecoderResult &other);
 

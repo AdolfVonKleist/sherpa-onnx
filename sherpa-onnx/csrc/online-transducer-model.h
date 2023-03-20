@@ -20,7 +20,7 @@
 
 namespace sherpa_onnx {
 
-struct OnlineTransducerDecoderResult;
+class OnlineTransducerDecoderResult;
 
 class OnlineTransducerModel {
  public:
