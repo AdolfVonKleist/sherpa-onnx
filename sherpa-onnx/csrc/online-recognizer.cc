@@ -29,6 +29,7 @@ static OnlineRecognizerResult Convert(const OnlineTransducerDecoderResult &src,
   std::string text;
   std::vector<std::string> tokens;
   std::vector<std::int32_t> timestamps;
+  std::vector<std::int32_t> silences;
   for (auto t : src.tokens) {
     text += sym_table[t];
     tokens.push_back(sym_table[t]);
@@ -38,6 +39,7 @@ static OnlineRecognizerResult Convert(const OnlineTransducerDecoderResult &src,
   ans.text = std::move(text);
   ans.tokens = std::move(tokens);
   ans.timestamps = std::move(src.timestamps);
+  ans.silences = std::move(src.silences);
   ans.num_processed_frames = std::move(src.num_processed_frames);
   ans.num_blank_frames = std::move(src.num_blank_frames);
   

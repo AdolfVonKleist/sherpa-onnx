@@ -110,10 +110,25 @@ void OnlineTransducerGreedySearchDecoder::Decode(
       if (y != 0) {
         emitted = true;
         (*result)[i].tokens.push_back(y);
+	
+	// emitted means we have a 'start' timestamp for the new word
 	(*result)[i].timestamps.push_back((*result)[i].num_processed_frames);
+
+	// emmited also means we _might_ have an _end_ timestamp for a silence
+	// segment, but we should only consider this given certain conditions.
+	// out heuristic for a silence segment: we want a 'chunk' that isn't just
+	// a natural break between tokens or words '12' here is observational
 	if ((*result)[i].num_trailing_blanks < 12) {
 	  (*result)[i].num_blank_frames -= (*result)[i].num_trailing_blanks;
+	} else {
+	  // push back the current index - 1, and the current index - duration
+	  // this will only be triggered if we have something that matches our
+	  // the value we have set for our silence heuristic!!!
+	  (*result)[i].silences.push_back((*result)[i].num_processed_frames - 1);
+	  (*result)[i].silences.push_back((*result)[i].num_processed_frames \
+					  - (*result)[i].num_trailing_blanks);
 	}
+	// finally, reset the num_trailing blanks
         (*result)[i].num_trailing_blanks = 0;
       } else {
         ++(*result)[i].num_trailing_blanks;

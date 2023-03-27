@@ -16,6 +16,7 @@ struct OnlineTransducerDecoderResult {
   /// The decoded token IDs so far
   std::vector<int64_t> tokens;
   std::vector<int32_t> timestamps;
+  std::vector<int32_t> silences;
   int32_t num_processed_frames = 0;
   int32_t num_blank_frames = 0;
   
@@ -29,7 +30,7 @@ struct OnlineTransducerDecoderResult {
   Hypotheses hyps;
 
   OnlineTransducerDecoderResult()
-    : tokens{}, timestamps{}, num_trailing_blanks(0),
+    : tokens{}, timestamps{}, silences{}, num_trailing_blanks(0),
       num_processed_frames(0), num_blank_frames(0),
       decoder_out{nullptr}, hyps{} {}
 

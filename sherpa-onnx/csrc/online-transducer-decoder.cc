@@ -26,6 +26,7 @@ OnlineTransducerDecoderResult &OnlineTransducerDecoderResult::operator=(
 
   tokens = other.tokens;
   timestamps = other.timestamps;
+  silences = other.silences;
 
   num_processed_frames = other.num_processed_frames;
   num_blank_frames = other.num_blank_frames;
@@ -56,7 +57,8 @@ OnlineTransducerDecoderResult &OnlineTransducerDecoderResult::operator=(
 
   tokens = std::move(other.tokens);
   timestamps = std::move(other.timestamps);
-
+  silences = std::move(other.silences);
+  
   num_processed_frames = other.num_processed_frames;
   num_blank_frames = other.num_blank_frames;
   num_trailing_blanks = other.num_trailing_blanks;

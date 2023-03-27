@@ -25,6 +25,7 @@ struct OnlineRecognizerResult {
   std::string text;
   std::vector<std::string> tokens;
   std::vector<int32_t> timestamps;
+  std::vector<int32_t> silences;
   int32_t num_processed_frames;
   int32_t num_blank_frames;
   

@@ -16,6 +16,7 @@ static void PybindOnlineRecognizerResult(py::module *m) {
   py::class_<PyClass>(*m, "OnlineRecognizerResult")
       .def_property_readonly("text", [](PyClass &self) { return self.text; })
       .def_property_readonly("timestamps", [](PyClass &self) { return self.timestamps; })
+      .def_property_readonly("silences", [](PyClass &self) { return self.silences; })
       .def_property_readonly("tokens", [](PyClass &self) { return self.tokens; })
       .def_property_readonly("num_processed_frames", [](PyClass &self) { return self.num_processed_frames; })
       .def_property_readonly("num_blank_frames", [](PyClass &self) { return self.num_blank_frames; });
