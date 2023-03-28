@@ -40,6 +40,10 @@ static OnlineRecognizerResult Convert(const OnlineTransducerDecoderResult &src,
   ans.tokens = std::move(tokens);
   ans.timestamps = std::move(src.timestamps);
   ans.silences = std::move(src.silences);
+  // make sure to push back any trailing silence as a final segment
+  ans.silences.push_back(src.num_processed_frames);
+  ans.silences.push_back(src.num_processed_frames - src.num_trailing_blanks);
+  
   ans.num_processed_frames = std::move(src.num_processed_frames);
   ans.num_blank_frames = std::move(src.num_blank_frames);
   
