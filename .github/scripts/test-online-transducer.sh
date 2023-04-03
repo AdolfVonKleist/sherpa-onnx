@@ -25,12 +25,13 @@ log "Download pretrained model and test-data from $repo_url"
 GIT_LFS_SKIP_SMUDGE=1 git clone $repo_url
 pushd $repo
 git lfs pull --include "*.onnx"
+ls -lh *.onnx
 popd
 
 waves=(
-$repo/test_wavs/1089-134686-0001.wav
-$repo/test_wavs/1221-135766-0001.wav
-$repo/test_wavs/1221-135766-0002.wav
+$repo/test_wavs/0.wav
+$repo/test_wavs/1.wav
+$repo/test_wavs/8k.wav
 )
 
 for wave in ${waves[@]}; do
@@ -40,7 +41,17 @@ for wave in ${waves[@]}; do
   $repo/decoder-epoch-99-avg-1.onnx \
   $repo/joiner-epoch-99-avg-1.onnx \
   $wave \
-  4
+  2
+done
+
+for wave in ${waves[@]}; do
+  time $EXE \
+  $repo/tokens.txt \
+  $repo/encoder-epoch-99-avg-1.int8.onnx \
+  $repo/decoder-epoch-99-avg-1.int8.onnx \
+  $repo/joiner-epoch-99-avg-1.int8.onnx \
+  $wave \
+  2
 done
 
 rm -rf $repo
@@ -57,12 +68,13 @@ log "Download pretrained model and test-data from $repo_url"
 GIT_LFS_SKIP_SMUDGE=1 git clone $repo_url
 pushd $repo
 git lfs pull --include "*.onnx"
+ls -lh *.onnx
 popd
 
 waves=(
 $repo/test_wavs/0.wav
 $repo/test_wavs/1.wav
-$repo/test_wavs/2.wav
+$repo/test_wavs/8k.wav
 )
 
 for wave in ${waves[@]}; do
@@ -72,7 +84,17 @@ for wave in ${waves[@]}; do
   $repo/decoder-epoch-11-avg-1.onnx \
   $repo/joiner-epoch-11-avg-1.onnx \
   $wave \
-  4
+  2
+done
+
+for wave in ${waves[@]}; do
+  time $EXE \
+  $repo/tokens.txt \
+  $repo/encoder-epoch-11-avg-1.int8.onnx \
+  $repo/decoder-epoch-11-avg-1.int8.onnx \
+  $repo/joiner-epoch-11-avg-1.int8.onnx \
+  $wave \
+  2
 done
 
 rm -rf $repo
@@ -89,12 +111,13 @@ log "Download pretrained model and test-data from $repo_url"
 GIT_LFS_SKIP_SMUDGE=1 git clone $repo_url
 pushd $repo
 git lfs pull --include "*.onnx"
+ls -lh *.onnx
 popd
 
 waves=(
-$repo/test_wavs/1089-134686-0001.wav
-$repo/test_wavs/1221-135766-0001.wav
-$repo/test_wavs/1221-135766-0002.wav
+$repo/test_wavs/0.wav
+$repo/test_wavs/1.wav
+$repo/test_wavs/8k.wav
 )
 
 for wave in ${waves[@]}; do
@@ -104,13 +127,25 @@ for wave in ${waves[@]}; do
   $repo/decoder-epoch-99-avg-1.onnx \
   $repo/joiner-epoch-99-avg-1.onnx \
   $wave \
-  4
+  2
+done
+
+# test int8
+#
+for wave in ${waves[@]}; do
+  time $EXE \
+  $repo/tokens.txt \
+  $repo/encoder-epoch-99-avg-1.int8.onnx \
+  $repo/decoder-epoch-99-avg-1.int8.onnx \
+  $repo/joiner-epoch-99-avg-1.int8.onnx \
+  $wave \
+  2
 done
 
 rm -rf $repo
 
 log "------------------------------------------------------------"
-log "Run streaming Zipformer transducer (Bilingual, Chinse + English)"
+log "Run streaming Zipformer transducer (Bilingual, Chinese + English)"
 log "------------------------------------------------------------"
 
 repo_url=https://huggingface.co/csukuangfj/sherpa-onnx-streaming-zipformer-bilingual-zh-en-2023-02-20
@@ -121,6 +156,7 @@ log "Download pretrained model and test-data from $repo_url"
 GIT_LFS_SKIP_SMUDGE=1 git clone $repo_url
 pushd $repo
 git lfs pull --include "*.onnx"
+ls -lh *.onnx
 popd
 
 waves=(
@@ -128,7 +164,7 @@ $repo/test_wavs/0.wav
 $repo/test_wavs/1.wav
 $repo/test_wavs/2.wav
 $repo/test_wavs/3.wav
-$repo/test_wavs/4.wav
+$repo/test_wavs/8k.wav
 )
 
 for wave in ${waves[@]}; do
@@ -138,7 +174,17 @@ for wave in ${waves[@]}; do
   $repo/decoder-epoch-99-avg-1.onnx \
   $repo/joiner-epoch-99-avg-1.onnx \
   $wave \
-  4
+  2
+done
+
+for wave in ${waves[@]}; do
+  time $EXE \
+  $repo/tokens.txt \
+  $repo/encoder-epoch-99-avg-1.int8.onnx \
+  $repo/decoder-epoch-99-avg-1.int8.onnx \
+  $repo/joiner-epoch-99-avg-1.int8.onnx \
+  $wave \
+  2
 done
 
 # Decode a URL
@@ -149,7 +195,17 @@ if [ $EXE == "sherpa-onnx-ffmpeg" ]; then
   $repo/decoder-epoch-99-avg-1.onnx \
   $repo/joiner-epoch-99-avg-1.onnx \
   https://huggingface.co/csukuangfj/sherpa-onnx-streaming-zipformer-bilingual-zh-en-2023-02-20/resolve/main/test_wavs/4.wav \
-  4
+  2
+fi
+
+if [ $EXE == "sherpa-onnx-ffmpeg" ]; then
+  time $EXE \
+  $repo/tokens.txt \
+  $repo/encoder-epoch-99-avg-1.int8.onnx \
+  $repo/decoder-epoch-99-avg-1.int8.onnx \
+  $repo/joiner-epoch-99-avg-1.int8.onnx \
+  https://huggingface.co/csukuangfj/sherpa-onnx-streaming-zipformer-bilingual-zh-en-2023-02-20/resolve/main/test_wavs/4.wav \
+  2
 fi
 
 rm -rf $repo

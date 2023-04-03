@@ -6,6 +6,16 @@ set(sources
   features.cc
   file-utils.cc
   hypothesis.cc
+  offline-model-config.cc
+  offline-paraformer-greedy-search-decoder.cc
+  offline-paraformer-model-config.cc
+  offline-paraformer-model.cc
+  offline-recognizer-impl.cc
+  offline-recognizer.cc
+  offline-stream.cc
+  offline-transducer-greedy-search-decoder.cc
+  offline-transducer-model-config.cc
+  offline-transducer-model.cc
   online-lstm-transducer-model.cc
   online-recognizer.cc
   online-stream.cc
@@ -56,10 +66,13 @@ if(SHERPA_ONNX_ENABLE_CHECK)
 endif()
 
 add_executable(sherpa-onnx sherpa-onnx.cc)
+add_executable(sherpa-onnx-offline sherpa-onnx-offline.cc)
 
 target_link_libraries(sherpa-onnx sherpa-onnx-core)
+target_link_libraries(sherpa-onnx-offline sherpa-onnx-core)
 if(NOT WIN32)
   target_link_libraries(sherpa-onnx "-Wl,-rpath,${SHERPA_ONNX_RPATH_ORIGIN}/../lib")
+  target_link_libraries(sherpa-onnx-offline "-Wl,-rpath,${SHERPA_ONNX_RPATH_ORIGIN}/../lib")
 endif()
 
 if(SHERPA_ONNX_ENABLE_PYTHON AND WIN32)
@@ -68,7 +81,13 @@ else()
   install(TARGETS sherpa-onnx-core DESTINATION lib)
 endif()
 
-install(TARGETS sherpa-onnx DESTINATION bin)
+install(
+  TARGETS
+    sherpa-onnx
+    sherpa-onnx-offline
+  DESTINATION
+    bin
+)
 
 if(SHERPA_ONNX_HAS_ALSA)
   add_executable(sherpa-onnx-alsa sherpa-onnx-alsa.cc alsa.cc)
@@ -88,6 +107,11 @@ if(SHERPA_ONNX_ENABLE_PORTAUDIO)
     microphone.cc
   )
 
+  add_executable(sherpa-onnx-microphone-offline
+    sherpa-onnx-microphone-offline.cc
+    microphone.cc
+  )
+
   if(BUILD_SHARED_LIBS)
     set(PA_LIB portaudio)
   else()
@@ -95,8 +119,15 @@ if(SHERPA_ONNX_ENABLE_PORTAUDIO)
   endif()
 
   target_link_libraries(sherpa-onnx-microphone PRIVATE ${PA_LIB} sherpa-onnx-core)
+  target_link_libraries(sherpa-onnx-microphone-offline PRIVATE ${PA_LIB} sherpa-onnx-core)
 
-  install(TARGETS sherpa-onnx-microphone DESTINATION bin)
+  install(
+    TARGETS
+      sherpa-onnx-microphone
+      sherpa-onnx-microphone-offline
+    DESTINATION
+      bin
+  )
 endif()
 
 if(SHERPA_ONNX_ENABLE_WEBSOCKET)
@@ -108,7 +139,6 @@ if(SHERPA_ONNX_ENABLE_WEBSOCKET)
     online-websocket-server.cc
   )
   target_link_libraries(sherpa-onnx-online-websocket-server sherpa-onnx-core)
-
 
   add_executable(sherpa-onnx-online-websocket-client
     online-websocket-client.cc
@@ -123,6 +153,17 @@ if(SHERPA_ONNX_ENABLE_WEBSOCKET)
     target_compile_options(sherpa-onnx-online-websocket-client PRIVATE -Wno-deprecated-declarations)
   endif()
 
+  # For offline websocket
+  add_executable(sherpa-onnx-offline-websocket-server
+    offline-websocket-server-impl.cc
+    offline-websocket-server.cc
+  )
+  target_link_libraries(sherpa-onnx-offline-websocket-server sherpa-onnx-core)
+
+  if(NOT WIN32)
+    target_link_libraries(sherpa-onnx-offline-websocket-server -pthread)
+    target_compile_options(sherpa-onnx-offline-websocket-server PRIVATE -Wno-deprecated-declarations)
+  endif()
 endif()
 
 

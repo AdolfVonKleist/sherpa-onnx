@@ -13,7 +13,7 @@ from pathlib import Path
 
 try:
     import sounddevice as sd
-except ImportError as e:
+except ImportError:
     print("Please install sounddevice first. You can use")
     print()
     print("  pip install sounddevice")
@@ -25,9 +25,11 @@ import sherpa_onnx
 
 
 def assert_file_exists(filename: str):
-    assert Path(
-        filename
-    ).is_file(), f"{filename} does not exist!\nPlease refer to https://k2-fsa.github.io/sherpa/onnx/pretrained_models/index.html to download it"
+    assert Path(filename).is_file(), (
+        f"{filename} does not exist!\n"
+        "Please refer to "
+        "https://k2-fsa.github.io/sherpa/onnx/pretrained_models/index.html to download it"
+    )
 
 
 def get_args():
@@ -91,7 +93,6 @@ def create_recognizer():
         rule2_min_trailing_silence=1.2,
         rule3_min_utterance_length=300,  # it essentially disables this rule
         decoding_method=args.decoding_method,
-        max_feature_vectors=100,  # 1 second
     )
     return recognizer
 
@@ -109,7 +110,6 @@ def main():
 
     last_result = ""
     segment_id = 0
-    display = sherpa_onnx.Display(max_word_per_line=30)
     with sd.InputStream(channels=1, dtype="float32", samplerate=sample_rate) as s:
         while True:
             samples, _ = s.read(samples_per_read)  # a blocking read
@@ -124,10 +124,10 @@ def main():
 
             if result and (last_result != result):
                 last_result = result
-                display.print(segment_id, result)
-
+                print("\r{}:{}".format(segment_id, result), end="", flush=True)
             if is_endpoint:
                 if result:
+                    print("\r{}:{}".format(segment_id, result), flush=True)
                     segment_id += 1
                 recognizer.reset(stream)
 

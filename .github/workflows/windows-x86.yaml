@@ -7,6 +7,7 @@ on:
     paths:
       - '.github/workflows/windows-x86.yaml'
       - '.github/scripts/test-online-transducer.sh'
+      - '.github/scripts/test-offline-transducer.sh'
       - 'CMakeLists.txt'
       - 'cmake/**'
       - 'sherpa-onnx/csrc/*'
@@ -16,6 +17,7 @@ on:
     paths:
       - '.github/workflows/windows-x86.yaml'
       - '.github/scripts/test-online-transducer.sh'
+      - '.github/scripts/test-offline-transducer.sh'
       - 'CMakeLists.txt'
       - 'cmake/**'
       - 'sherpa-onnx/csrc/*'
@@ -71,7 +73,15 @@ jobs:
 
           ls -lh ./bin/Release/sherpa-onnx.exe
 
-      - name: Test sherpa-onnx for Windows x86
+      - name: Test offline transducer for Windows x86
+        shell: bash
+        run: |
+          export PATH=$PWD/build/bin/Release:$PATH
+          export EXE=sherpa-onnx-offline.exe
+
+          .github/scripts/test-offline-transducer.sh
+
+      - name: Test online transducer for Windows x86
         shell: bash
         run: |
           export PATH=$PWD/build/bin/Release:$PATH

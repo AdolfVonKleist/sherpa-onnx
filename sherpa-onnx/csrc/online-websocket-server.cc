@@ -76,6 +76,7 @@ int32_t main(int32_t argc, char *argv[]) {
   sherpa_onnx::OnlineWebsocketServer server(io_conn, io_work, config);
   server.Run(port);
 
+  SHERPA_ONNX_LOGE("Started!");
   SHERPA_ONNX_LOGE("Listening on: %d", port);
   SHERPA_ONNX_LOGE("Number of work threads: %d", num_work_threads);
 
